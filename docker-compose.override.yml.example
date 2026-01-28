@@ -1,0 +1,34 @@
+version: '3.8'
+
+# Docker Compose override for local development
+# This file is automatically used with docker-compose up
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      target: builder
+    command: npm run dev
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    command: npm run dev
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=*
+
+  mongodb:
+    command: mongod --logpath /dev/null
+
+  postgres:
+    command: postgres -c log_statement=all -c log_destination=stderr
+
+  redis:
+    command: redis-server --loglevel verbose
